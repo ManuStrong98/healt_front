@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 
 export const useGet = (url) => {
@@ -8,14 +9,16 @@ export const useGet = (url) => {
 
   useEffect(() => {
     const fetching = async () => {
-      try {
-        const response = await fetch(url)
-        if (!response.ok) {
-          throw new Error('El fetch get no salio como se esperaba')
-        }
+      setIsLoading(true)
+      const token = localStorage.getItem('access_token')
 
-        const data = await response.json()
-        setResult(data)
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        setResult(response.data)
       } catch (err) {
         setError('Surgio un problema al hacer fetch de los datos')
       } finally {

@@ -1,12 +1,13 @@
 import imgAux from '@/assets/med.jpg'
 import { useStore } from '@/hooks/useStore'
+import { Link } from 'react-router-dom'
 
 
 export const PlayerInfo = () => {
   const { currentAudio } = useStore()
 
   return (
-    // <Link to={currentAudio.id && `/book/${currentAudio.id}`}>
+    <Link to={currentAudio.id && `/book/${currentAudio.id}`}>
       <div className='flex items-center justify-start gap-2 lg:w-10/12'>
         <img src={currentAudio.cover || imgAux}
           alt={`portada_${currentAudio.title}`}
@@ -22,6 +23,6 @@ export const PlayerInfo = () => {
           </p>
         </div>
       </div>
-    // </Link>
+    </Link>
   )
 }

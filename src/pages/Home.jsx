@@ -7,8 +7,14 @@ export const Home = () => {
   const query = search.split('=')[1]
 
   return !search ? (
-    <LayoutContent title='Sugerencias' section='sugerencias' />
+    <LayoutContent
+      title='Sugerencias'
+      url='https://health-production-6b96.up.railway.app/api/book/?section=sugerencias'
+    />
   ) : (
-    <LayoutContent title='Resultados' search={query} />
+    <LayoutContent
+      title='Resultados'
+      url={`https://health-production-6b96.up.railway.app/api/book?search=${query}`}
+    />
   )
 }
