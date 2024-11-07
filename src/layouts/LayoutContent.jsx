@@ -1,12 +1,23 @@
 import { Card } from '@/components/Card'
-import { useGet } from '@/hooks/useGet'
+import { Error } from '@/components/Error'
+import { Loading } from '@/components/Loading'
+import { useGetBooksFavorites } from '@/hooks/useBooks'
 
 
-export const LayoutContent = ({ title, url, section='' }) => {
-  const [content, error] = useGet(url)
-  const [favs] = useGet('https://health-production-6b96.up.railway.app/api/book/favorites')
+export const LayoutContent = ({ title, disabled, content }) => {
+  const favs = useGetBooksFavorites()
+  const books = content.data?.data.books || []
+  const favoriteIds = new Set(favs.data?.data.books.map((book) => book.id))
 
-  if (!favs) return null
+  const renderStatus = () => {
+    if (content.isLoading || favs.isLoading)
+      return <Loading />
+    if (content.error || favs.error)
+      return <Error>No se obtuvieron resultados satisfactorios</Error>
+    if (books.length === 0)
+      return <p className='text-lg font-semibold'>No se encontraron resultados</p>
+    return null
+  }
 
   return (
     <div className='flex flex-col'>
@@ -14,33 +25,20 @@ export const LayoutContent = ({ title, url, section='' }) => {
         <h2 className='text-2xl font-bold'>{title}</h2>
       </section>
 
-      {!!error ? (
-        <p className='font-semibold text-red-600'>
-          No se logro recupear la información
-        </p>
-      ) : !!content && content.length === 0 ? (
-        <p className='font-semibold'>
-          No se encontraron resultados
-        </p>
-      ) : (
-        <section className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:5 gap-8'>
-          {!!content && content.map((book) => {
-            return (
-              <div key={book.id}
-                className='border shadow-sm rounded-xl hover:shadow-lg transition'
-              >
-                <Card id={book.id}
-                  title={book.nombre}
-                  author={book.autor}
-                  url_cover={book.url_portada}
-                  url_audio={book.url_audio}
-                  categories={book.categorias}
-                  disabled={section == 'proximos_lanzamientos'}
-                  isFav={favs && !!favs.find(b => b.id === book.id)}
-                />
-              </div>
-            )
-          })}
+      {renderStatus() || (
+        <section className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:5 gap-4 lg:gap-8'>
+          {books.map((book) => (
+            <Card key={book.id}
+              id={book.id}
+              title={book.title}
+              author={book.author}
+              url_cover={book.cover_path}
+              url_audio={book.audio_path}
+              categories={book.categories}
+              disabled={disabled}
+              isFav={favoriteIds.has(book.id)}
+            />
+          ))}
         </section>
       )}
     </div>

@@ -1,7 +1,9 @@
 import { Card } from '@/components/Card'
 import { EpubViewer } from '@/components/EpubViewer'
-import { useGet } from '@/hooks/useGet'
-import { useStore } from '@/hooks/useStore'
+import { Error } from '@/components/Error'
+import { Loading } from '@/components/Loading'
+import { useGetBook, useGetBooksFavorites } from '@/hooks/useBooks'
+import audioStore from '@/store/audioStore'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -9,17 +11,21 @@ import { useParams } from 'react-router-dom'
 export const ContentBook = () => {
   const { id } = useParams()
   const [isReading, setIsReading] = useState(false)
-  const { currentAudio, setCurrentAudio } = useStore()
-  const [book, error] = useGet(`https://health-production-6b96.up.railway.app/api/book/${id}`)
+  const { currentAudio, setCurrentAudio } = audioStore()
+  const { data, isLoading, error } = useGetBook(id)
+  const favoritos = useGetBooksFavorites()
+
+  const book = data?.data
+  const favs = new Set(favoritos.data?.data.books.map((book) => book.id))
 
   useEffect(() => {
     if (!currentAudio?.id && !!book) {
       setCurrentAudio({
         id: book.id,
-        title: book.nombre,
-        author: book.autor,
-        cover: book.url_portada,
-        url: book.url_audio
+        title: book.title,
+        author: book.author,
+        cover: book.cover_path,
+        url: book.audio_path
       })
     }
   }, [book])
@@ -28,12 +34,12 @@ export const ContentBook = () => {
     setIsReading(!isReading)
   }
 
-  if (error) {
-    return (
-      <p className='font-semibold text-red-600 text-center pt-5'>
-        No se logro recupear la información
-      </p>
-    )
+  if (isLoading || favoritos.isLoading)
+    return <Loading />
+  if (error)
+    return <Error>{error.response.data.message}</Error>
+  if (favoritos.error) {
+    return <Error>{favoritos.error.response.data.message}</Error>
   }
 
   return (
@@ -43,17 +49,17 @@ export const ContentBook = () => {
           <section className='flex flex-col items-center justify-center w-11/12 h-full lg:w-full lg:flex-row'>
             <div className={`mx-auto ${isReading && 'hidden'}`}>
               <Card id={book.id}
-                title={book.nombre}
-                author={book.autor}
-                url_cover={book.url_portada}
-                url_audio={book.url_audio}
-                categories={book.categorias}
-                disabled
+                title={book.title}
+                author={book.author}
+                url_cover={book.cover_path}
+                url_audio={book.audio_path}
+                categories={book.categories}
+                isFav={favs.has(book.id)}
+                isContent
               />
             </div>
-
             <div className={`${!isReading && 'hidden'} w-full mx-auto h-full lg:block`}>
-              <EpubViewer url={book.url_texto} />
+              <EpubViewer url={book.text_path} />
             </div>
           </section>
 

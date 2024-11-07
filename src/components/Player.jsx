@@ -1,11 +1,24 @@
 import { PlayerActions } from '@/components/PlayerActions'
 import { PlayerControls } from '@/components/PlayerControls'
 import { PlayerInfo } from '@/components/PlayerInfo'
-import { useStore } from '@/hooks/useStore'
+import audioStore from '@/store/audioStore'
+import { useEffect } from 'react'
 
 
 export const Player = () => {
-  const { currentAudio } = useStore()
+  const { setCurrentAudio, currentAudio } = audioStore()
+
+  useEffect(() => {
+    const initialAudio = {
+      id: null,
+      title: 'Unknow Title',
+      author: 'Unknow Author',
+      cover: null,
+      url: null
+    }
+
+    setCurrentAudio(initialAudio)
+  }, [setCurrentAudio])
 
   if (!currentAudio) {
     return null

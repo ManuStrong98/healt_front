@@ -1,5 +1,5 @@
 import { ProgressBar } from '@/components/ProgressBar'
-import { useStore } from '@/hooks/useStore'
+import audioStore from '@/store/audioStore'
 import { useEffect, useRef } from 'react'
 
 
@@ -12,7 +12,7 @@ export const PlayerControls = () => {
     togglePlay,
     playbackPosition,
     setPosition
-  } = useStore()
+  } = audioStore()
 
   const animationRef = useRef(null)
   const playbackRef = useRef(playbackPosition)

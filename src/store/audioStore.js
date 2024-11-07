@@ -2,7 +2,7 @@ import { Howl } from 'howler'
 import { create } from 'zustand'
 
 
-export const useStore = create((set) => ({
+const audioStore = create((set) => ({
   currentAudio: null,
   howl: null,
   isPlaying: false,
@@ -10,6 +10,7 @@ export const useStore = create((set) => ({
   volume: 100,
   muted: false,
   duration: 0,
+  isOpenDescription: false,
 
   setCurrentAudio: (audio) => set((state) => {
     state.howl?.unload()
@@ -38,6 +39,8 @@ export const useStore = create((set) => ({
     return { isPlaying: !state.isPlaying }
   }),
 
+  setDuration: (duration) => set({ duration }),
+
   setPosition: (position) => set((state) => {
     state.howl?.seek(position)
     return { playbackPosition: position }
@@ -59,4 +62,15 @@ export const useStore = create((set) => ({
     state.howl?.mute(state.muted)
     return { isPlaying: true, playbackPosition: 0 }
   }),
+
+  logoutAudio: () => set((state) => {
+    state.howl?.unload()
+    return { isPlaying: false, playbackPosition: 0, duration: 0 }
+  }),
+
+  toggleOpenDescription: () => set((state) => ({ isOpenDescription: !state.isOpenDescription })),
+
+  setIsOpenDescription: (value) => set({ isOpenDescription: value }),
 }))
+
+export default audioStore

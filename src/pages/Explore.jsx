@@ -1,25 +1,36 @@
+import { useGetBooksSection } from '@/hooks/useBooks'
 import { LayoutContent } from '@/layouts/LayoutContent'
 
 
 export const Explore = () => {
   const sections = [
-    { title: 'Nuevos Lanzamientos', id: 'nuevos_lanzamientos' },
-    { title: 'Populares', id: 'populares' },
-    { title: 'Próximos Lanzamientos', id: 'proximos_lanzamientos' },
+    {
+      title: 'Nuevos Lanzamientos',
+      id: 'nuevos_lanzamientos',
+      content: useGetBooksSection('nuevos')
+    },
+    {
+      title: 'Populares',
+      id: 'populares',
+      content: useGetBooksSection('populares')
+    },
+    {
+      title: 'Próximos Lanzamientos',
+      id: 'proximos_lanzamientos',
+      content: useGetBooksSection('proximos')
+    },
   ]
 
   return (
-    <div>
-      {sections.map(({ title, id }) => {
-        return (
-          <LayoutContent
-            key={id}
-            title={title}
-            section={id}
-            url={`https://health-production-6b96.up.railway.app/api/book?section=${id}`}
-          />
-        )
-      })}
-    </div>
+    <>
+      {sections.map(({ title, id, content }) => (
+        <LayoutContent
+          key={id}
+          title={title}
+          content={content}
+          disabled={id === 'proximos_lanzamientos'}
+        />
+      ))}
+    </>
   )
 }

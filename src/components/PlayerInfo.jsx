@@ -1,10 +1,10 @@
 import imgAux from '@/assets/med.jpg'
-import { useStore } from '@/hooks/useStore'
+import audioStore from '@/store/audioStore'
 import { Link } from 'react-router-dom'
 
 
 export const PlayerInfo = () => {
-  const { currentAudio } = useStore()
+  const { currentAudio } = audioStore()
 
   return (
     <Link to={currentAudio.id && `/book/${currentAudio.id}`}>
