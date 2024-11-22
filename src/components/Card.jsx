@@ -1,11 +1,12 @@
 import { Modal } from '@/components/Modal'
+import { StarRating } from '@/components/StarRating'
 import { useDeleteBookFavorites, usePostBookFavorites } from '@/hooks/useBooks'
 import audioStore from '@/store/audioStore'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 
-export const Card = ({ id, title, author, url_cover, url_audio, categories, disabled, isFav, isContent }) => {
+export const Card = ({ id, title, author, url_cover, url_audio, categories, disabled, isFav, isContent, rating }) => {
   const { setPlaying, setCurrentAudio, startAudio, currentAudio, setIsOpenDescription } = audioStore()
   const [iconHeart, setIconHeart] = useState(isFav)
   const { mutate: saveFavorite, isPending: isPendingPost } = usePostBookFavorites(id)
@@ -68,7 +69,7 @@ export const Card = ({ id, title, author, url_cover, url_audio, categories, disa
         className='border shadow-sm rounded-xl hover:shadow-lg transition'
         onClick={handleClick}
       >
-        <div className={`group ${(disabled || isContent) && 'cursor-auto'} relative group`}>
+        <div className={`group ${(disabled || isContent) && 'cursor-auto'} relative`}>
           <div className='aspect-square overflow-hidden relative'>
             <img
               className={`m-auto h-full ${!disabled && !isContent && 'group-hover:scale-105 group-focus:scale-105 transition-transform duration-500'}`}
@@ -99,31 +100,35 @@ export const Card = ({ id, title, author, url_cover, url_audio, categories, disa
           </div>
 
           <div className='px-3 py-4'>
-            <p className='font-bold text-base mb-2'>{title}</p>
-            <div className='text-xs flex justify-between'>
-              <p className='text-gray-700'>{author}</p>
-              {isContent &&
-                <div className='flex gap-1'>
-                  <i className='bi bi-clock-history'></i>
-                  <p>{duration}</p>
-                </div>
-              }
-
+            <div className='mb-3'>
+              <p className='font-bold text-base mb-2'>{title}</p>
+              <div className='text-xs flex justify-between'>
+                <p className='text-gray-700'>{author}</p>
+                {isContent &&
+                  <div className='flex gap-1'>
+                    <i className='bi bi-clock-history'></i>
+                    <p>{duration}</p>
+                  </div>
+                }
+              </div>
             </div>
+
+            {rating && <StarRating rating={parseFloat(rating)} />}
+
+            {!!categories && categories.length > 0 && (
+              <div className='mt-3 flex flex-wrap gap-1'>
+                {categories.map(({ name }, idx) => (
+                  <span
+                    key={`${name}-${idx}`}
+                    className='inline-block bg-gray-200 rounded-full px-2 py-px text-sm font-semibold text-gray-700 m-px'
+                  >
+                    #{name}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
-          {!!categories && categories.length > 0 && (
-            <div className='px-6 pt-4 pb-2'>
-              {categories.map(({ nombre }, idx) => (
-                <span
-                  key={`${nombre}-${idx}`}
-                  className='inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2'
-                >
-                  #{nombre}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
       </Link>
 

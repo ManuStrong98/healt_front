@@ -1,7 +1,9 @@
 import { Card } from '@/components/Card'
+import { Comments } from '@/components/Comments'
 import { EpubViewer } from '@/components/EpubViewer'
 import { Error } from '@/components/Error'
 import { Loading } from '@/components/Loading'
+import { Qualification } from '@/components/Qualification'
 import { useGetBook, useGetBooksFavorites } from '@/hooks/useBooks'
 import audioStore from '@/store/audioStore'
 import { useEffect, useState } from 'react'
@@ -14,6 +16,7 @@ export const ContentBook = () => {
   const { currentAudio, setCurrentAudio } = audioStore()
   const { data, isLoading, error } = useGetBook(id)
   const favoritos = useGetBooksFavorites()
+  const [viewQualification, setViewQualification] = useState(false)
 
   const book = data?.data
   const favs = new Set(favoritos.data?.data.books.map((book) => book.id))
@@ -53,9 +56,9 @@ export const ContentBook = () => {
                 author={book.author}
                 url_cover={book.cover_path}
                 url_audio={book.audio_path}
-                categories={book.categories}
                 isFav={favs.has(book.id)}
                 isContent
+                rating={book.rating}
               />
             </div>
             <div className={`${!isReading && 'hidden'} w-full mx-auto h-full lg:block`}>
@@ -63,16 +66,34 @@ export const ContentBook = () => {
             </div>
           </section>
 
-          <section className='w-full flex justify-between items-center text-xl text-white lg:pb-5'>
+          <section className='w-full flex justify-between items-center text-xl text-white pb-5 flex-wrap gap-2'>
+            <button
+              className='flex gap-3 items-center bg-htc-lightblue rounded-md py-2 px-3'
+              onClick={() => setViewQualification(true)}
+            >
+              <i className='bi bi-star-fill'></i>
+              <small>Calificar</small>
+            </button>
+
             <button
               className='lg:hidden flex gap-3 items-center bg-htc-lightblue rounded-md py-2 px-3'
-              onClick={() => { toggleReading() }}
+              onClick={() => toggleReading()}
             >
-              <i className='bi bi-book'></i>
+              <i className='bi bi-book-fill'></i>
               <small>Leer</small>
             </button>
           </section>
+
+          <Comments id_content={id} />
         </>
+      )}
+
+      {viewQualification && (
+        <Qualification
+          id={id}
+          setView={setViewQualification}
+          initValue={book.rating || 0}
+        />
       )}
     </div>
   )

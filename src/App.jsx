@@ -1,6 +1,8 @@
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { useVerifyToken } from '@/hooks/useAuth'
 import { Layout } from '@/layouts/Layout'
+import { Categorie } from '@/pages/Categorie'
+import { Categories } from '@/pages/Categories'
 import { ContentBook } from '@/pages/ContentBook'
 import { Explore } from '@/pages/Explore'
 import { Favorites } from '@/pages/Favorites'
@@ -13,6 +15,7 @@ import authStore from '@/store/authStore'
 import { useEffect } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import 'bootstrap-icons/font/bootstrap-icons.min.css'
+import Profile from './pages/Profile'
 
 
 export const App = () => {
@@ -32,9 +35,12 @@ export const App = () => {
 
         <Route element={<ProtectedRoute> <Layout /> </ProtectedRoute>}>
           <Route path='/' element={<Home />} />
+          <Route path='/categories' element={<Categories />} />
+          <Route path='/categories/:categorie' element={<Categorie />} />
           <Route path='/explore' element={<Explore />} />
           <Route path='/favorites' element={<Favorites />} />
           <Route path='/book/:id' element={<ContentBook />} />
+          <Route path='/user' element={<Profile />} />
         </Route>
 
         <Route path='*' element={<NotFound />} />

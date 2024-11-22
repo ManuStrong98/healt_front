@@ -4,7 +4,7 @@ import { Loading } from '@/components/Loading'
 import { useGetBooksFavorites } from '@/hooks/useBooks'
 
 
-export const LayoutContent = ({ title, disabled, content }) => {
+export const LayoutContent = ({ title, disabled, content, viewCategories }) => {
   const favs = useGetBooksFavorites()
   const books = content.data?.data.books || []
   const favoriteIds = new Set(favs.data?.data.books.map((book) => book.id))
@@ -34,9 +34,10 @@ export const LayoutContent = ({ title, disabled, content }) => {
               author={book.author}
               url_cover={book.cover_path}
               url_audio={book.audio_path}
-              categories={book.categories}
+              categories={viewCategories ? book.categories : []}
               disabled={disabled}
               isFav={favoriteIds.has(book.id)}
+              rating={book.rating}
             />
           ))}
         </section>

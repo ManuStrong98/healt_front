@@ -14,6 +14,10 @@ const authStore = create((set) => ({
     localStorage.removeItem('access_token')
     set({ isAuthenticated: false, user: null })
   },
+
+  updateUser: (newUser) => {
+    set({ user: newUser })
+  }
 }))
 
 export default authStore

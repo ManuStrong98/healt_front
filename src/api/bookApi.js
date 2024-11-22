@@ -18,3 +18,19 @@ export const deleteFavorite = (id) => axiosInstance.delete(`/books/favorites/${i
 export const postView = (id) => axiosInstance.post(`/books/${id}`)
 
 export const getBooksFavoritesBySearch = (query) => axiosInstance.get(`/books/favorites/?search=${query}`)
+
+export const getProgress = () => axiosInstance.get('/books/progress')
+
+export const postProgress = (id_content, progress) => axiosInstance.post('/books/progress', { id_content, progress })
+
+export const postQualification = (id_content, qualification) => axiosInstance.post('/books/qualification', { id_content, qualification })
+
+export const getComments = (id_content) => axiosInstance.get(`/books/comments/${id_content}`)
+
+export const postComment = (id_content, message) => axiosInstance.post('/books/comments', { id_content, message })
+
+export const getCategories = () => axiosInstance.get('/books/categories')
+
+export const getBooksByCategorie = (id) => axiosInstance.get(`/books/categories/${id}`)
+
+export const getCategorie = (id) => axiosInstance.get(`/books/categorie/${id}`)
