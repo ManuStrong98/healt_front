@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 export const Register = () => {
   const [formData, setFormData] = useState({
-    name: '', lastname: '', email: '', password: '', confirmPassword: ''
+    name: '', lastname: '', email: '', userName: '', profile: null, password: '', confirmPassword: ''
   })
   const { isAuthenticated } = authStore()
   const navigate = useNavigate()
@@ -47,7 +47,22 @@ export const Register = () => {
         ...errors,
         [name]: nameRegex.test(value) ? '' : 'Solo se permiten letras y espacios',
       })
-    } else if (name === 'email') {
+    } else if(name === 'userName'){
+      const userNameRegex = /^[a-zA-Z0-9_]+$/
+      setErrors({
+        ...errors,
+        [name]: userNameRegex.test(value) ? '' : 'El nombre de usuario solo puede contener letras, números y guiones bajos',
+      })
+      setErrors({
+        ...errors,
+        [name]:  value.length <= 15? '' : 'El nombre de usuario es demasiado grande',
+      })
+      setErrors({
+        ...errors,
+        [name]:  value.length >= 4? '' : 'El nombre de usuario es demasiado pequeño',
+      })
+      
+    }else if (name === 'email') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const allowedDomains = ['hotmail.com','gmail.com','yahoo.com','outlook.com'];
       const domain=value.split('@')[1];
@@ -77,7 +92,7 @@ export const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!errors.name && !errors.lastname && !errors.email) {
+    if (!errors.name && !errors.lastname && !errors.email && !errors.userName) {
       register(formData)
     }
   }
@@ -148,6 +163,25 @@ export const Register = () => {
                 />
                 {errors.email && <small className='text-red-600'>{errors.email}</small>}
                 {errorState && errorState.status === 409 && (
+                  <small className='text-red-600'>{error.response.data.message}</small>
+                )}
+              </div>
+              
+              <div>
+                <label htmlFor='userName' className='block text-sm font-medium text-gray-700'>
+                  Nombre de Usuario: <span className='text-red-500 font-bold'>*</span>
+                </label>
+                <input
+                  id='userName'
+                  type='text'
+                  name='userName'
+                  required
+                  className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                  placeholder='Ingrese un nombre de usuario'
+                  onChange={handleChange}
+                />
+                {errors.userName && <small className='text-red-600'>{errors.userName}</small>}
+                {errorState && errorState.status === 402 && (
                   <small className='text-red-600'>{error.response.data.message}</small>
                 )}
               </div>

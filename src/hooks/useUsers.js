@@ -8,7 +8,7 @@ export const usePutUpdatePassword = () => useMutation({
 })
 
 export const useUpdateProfile = () => useMutation({
-  mutationFn: ({email, genero, nacimiento, pais, se_unio, number}) => updateProfile(email, genero, nacimiento, pais, se_unio, number)
+  mutationFn: ({actualEmail, email, nacimiento, nombre, apellidos, perfil, username, pais, telefono, genero}) => updateProfile(actualEmail, email, nacimiento, nombre, apellidos, perfil, username, pais, telefono, genero)
 })
 
 export const usePutUpdatePasswordWithPassword = () => useMutation({

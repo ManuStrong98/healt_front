@@ -10,7 +10,6 @@ import { Modal } from '@/components/Modal'
 
 const Profile = () => {
   const [isPasswordOpen, setIsPasswordOpen] = useState(false)
-  const [isEditOpen, setisEditOpen] = useState(false)
   const { data } = useGetCountries()
   const [countriesName, setCountriesName] = useState([])
   const [imageUrl, setImageUrl] = useState('')
@@ -19,8 +18,12 @@ const Profile = () => {
     id: user.id,
     email: user.email,
     nacimiento: user.nacimiento ? new Date(user.nacimiento) : null,
+    nombre: user.nombre,
+    apellidos: user.apellidos,
+    perfil: user.perfil,
+    username: user.username,
     pais: user.pais,
-    number: user.number,
+    telefono: user.telefono,
     genero: user.genero,
     se_unio: new Date(user.se_unio)
   })
@@ -28,6 +31,10 @@ const Profile = () => {
   const openModal = () => setViewConditions(true)
   const closeModal = () => setViewConditions(false)
   const { mutate: updateProfile, error, isPending, isSuccess } = useUpdateProfile()
+  const [errors, setErrors] = useState({})
+  const [errorState, setErrorState] = useState({})
+
+
 
   useEffect(() => {
     if (data) {
@@ -42,19 +49,18 @@ const Profile = () => {
     if (isSuccess) updateUser(form)
   }, [isSuccess])
 
+  useEffect(() => {
+    setErrorState(error ? error : {})
+  }, [error])
+
 
 
   const sendData = () => {
-    const { email, genero, nacimiento, pais, se_unio, number } = form;
-    updateProfile({ email, genero, nacimiento, pais, se_unio, number });
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }))
+    if (!errors.name && !errors.lastname && !errors.email && !errors.userName) {
+      const actualEmail = user.email
+      const { email, nacimiento, nombre, apellidos, perfil, username, pais, telefono, genero } = form
+      updateProfile({ actualEmail, email, nacimiento, nombre, apellidos, perfil, username, pais, telefono, genero })
+    }
   }
 
   const handleDateChange = (date) => {
@@ -62,6 +68,44 @@ const Profile = () => {
       ...prevForm,
       ['nacimiento']: date,
     }))
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setForm({ ...form, [name]: value })
+    setErrorState({})
+
+    if (name === 'nombre' || name === 'apellidos') {
+      const nameRegex = /^[a-zA-Z\s]+$/
+      setErrors({
+        ...errors,
+        [name]: nameRegex.test(value) ? '' : 'Solo se permiten letras y espacios',
+      })
+    } else if (name === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const allowedDomains = ['hotmail.com', 'gmail.com', 'yahoo.com', 'outlook.com'];
+      const domain = value.split('@')[1];
+
+      if (!emailRegex.test(value)) {
+        setErrors({
+          ...errors,
+          email: 'Formato de correo inválido',
+        });
+      } else if (!allowedDomains.includes(domain)) {
+        setErrors({
+          ...errors,
+          email: 'Dominio de correo no permitido',
+        });
+      } else {
+        setErrors({
+          ...errors,
+          email: '',
+        });
+      }
+
+    } else {
+      setErrors({})
+    }
   }
 
   const handleFileChange = (e) => {
@@ -116,7 +160,7 @@ const Profile = () => {
     backgroundColor: '#f9f9f9',
     width: '255px',
     outline: 'none',
-  };
+  }
 
 
   const genderOptions = [
@@ -150,7 +194,7 @@ const Profile = () => {
             />
           </div>
           <div className="text-center md:text-left">
-            <h3 className="text-4xl font-semibold text-gray-800">Kisnes Huges</h3>
+            <h3 className="text-4xl font-semibold text-gray-800">{user.username}</h3>
             <p className="text-gray-600">Se unio el: {`${form.se_unio.getFullYear()}/${form.se_unio.getMonth() + 1}/${form.se_unio.getDate()}`}</p>
           </div>
         </div>
@@ -174,6 +218,36 @@ const Profile = () => {
               className='text-gray-800 w-64 border-htc-blue border-2 rounded-sm h-8 px-2 focus:outline-none py-4'
             />
           </div>
+            {errors.email && <small className='text-red-600'>{errors.email}</small>}
+            {errorState && errorState.status === 409 && (
+              <small className='text-red-600'>{errorState.response.data.message}</small>
+            )}
+
+          <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+            <span className="text-gray-600 font-medium">Nombre(s):</span>
+            <input
+              type="text"
+              name="nombre"
+              value={form.nombre}
+              placeholder="No especificado"
+              onChange={handleChange}
+              className='text-gray-800 w-64 border-htc-blue border-2 rounded-sm h-8 px-2 focus:outline-none py-4'
+            />
+          </div>
+            {errors.nombre && <small className='text-red-600'>{errors.nombre}</small>}
+
+          <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+            <span className="text-gray-600 font-medium">Apellido(s):</span>
+            <input
+              type="text"
+              name="apellidos"
+              value={form.apellidos}
+              placeholder="No especificado"
+              onChange={handleChange}
+              className='text-gray-800 w-64 border-htc-blue border-2 rounded-sm h-8 px-2 focus:outline-none py-4'
+            />
+          </div>
+            {errors.apellidos && <small className='text-red-600'>{errors.apellidos}</small>}
 
           <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
             <span className="text-gray-600 font-medium">Fecha de Nacimiento:</span>
@@ -207,8 +281,8 @@ const Profile = () => {
             <span className="text-gray-600 font-medium">Número de teléfono:</span>
             <input
               type="text"
-              name="number"
-              value={form.number || ''}
+              name="telefono"
+              value={form.telefono || ''}
               onChange={(e) => {
                 const { value } = e.target;
                 if (/^\d*$/.test(value) && value.length <= 8) {
@@ -235,7 +309,7 @@ const Profile = () => {
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 justify-center md:justify-between">
-          <button 
+          <button
             className="text-left my-auto font-medium text-htc-lightblue hover:text-htc-blue"
             onClick={openModal}>
             <span className="border-b border-htc-blue hover:border-htc-blue">
