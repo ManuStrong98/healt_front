@@ -8,7 +8,7 @@ export const Comment = ({ id, author, message, date }) => {
 
   return (
     <div className='flex flex-col w-full py-4 border-b border-gray-300'>
-      <div className='flex items-center'>
+      <div className='flex items-start'>
         <div className='w-10 h-10 bg-gray-300 rounded-full'></div>
 
         <div className='ml-4 flex-1'>

@@ -6,13 +6,13 @@ const audioStore = create((set) => ({
   currentAudio: null,
   howl: null,
   isPlaying: false,
-  playbackPosition: 0,
+  playbackPosition: 0.1,
   volume: 100,
   muted: false,
   duration: 0,
   isOpenDescription: false,
 
-  setCurrentAudio: (audio) => set((state) => {
+  setCurrentAudio: (audio, progress=0.1) => set((state) => {
     state.howl?.unload()
 
     const newHowl = new Howl({
@@ -22,7 +22,7 @@ const audioStore = create((set) => ({
         const audioDuration = newHowl.duration()
         set({ duration: audioDuration })
       },
-      onend: () => set({ isPlaying: false, playbackPosition: 0 }),
+      onend: () => set({ isPlaying: false, playbackPosition: progress }),
     })
 
     return { currentAudio: audio, howl: newHowl, playbackPosition: 0 }
@@ -57,15 +57,16 @@ const audioStore = create((set) => ({
     return { muted: isMuted }
   }),
 
-  startAudio: () => set((state) => {
+  startAudio: (progress) => set((state) => {
+    if (progress)state.howl?.seek(progress)
     state.howl?.play()
     state.howl?.mute(state.muted)
-    return { isPlaying: true, playbackPosition: 0 }
+    return { isPlaying: true }
   }),
 
   logoutAudio: () => set((state) => {
     state.howl?.unload()
-    return { currentAudio: {}, isPlaying: false, playbackPosition: 0, duration: 0 }
+    return { currentAudio: {}, isPlaying: false, playbackPosition: 0.1, duration: 0 }
   }),
 
   toggleOpenDescription: () => set((state) => ({ isOpenDescription: !state.isOpenDescription })),
@@ -74,3 +75,4 @@ const audioStore = create((set) => ({
 }))
 
 export default audioStore
+

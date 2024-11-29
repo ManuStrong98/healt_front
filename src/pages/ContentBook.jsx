@@ -8,6 +8,7 @@ import { useGetBook, useGetBooksFavorites } from '@/hooks/useBooks'
 import audioStore from '@/store/audioStore'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useGetProgressByContentId } from '../hooks/useProgress'
 
 
 export const ContentBook = () => {
@@ -17,6 +18,7 @@ export const ContentBook = () => {
   const { data, isLoading, error } = useGetBook(id)
   const favoritos = useGetBooksFavorites()
   const [viewQualification, setViewQualification] = useState(false)
+  const {data: dataProgress} = useGetProgressByContentId(id)
 
   const book = data?.data
   const favs = new Set(favoritos.data?.data.books.map((book) => book.id))
@@ -29,7 +31,7 @@ export const ContentBook = () => {
         author: book.author,
         cover: book.cover_path,
         url: book.audio_path
-      })
+      },dataProgress)
     }
   }, [book])
 

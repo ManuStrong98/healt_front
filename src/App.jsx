@@ -6,6 +6,7 @@ import { Categories } from '@/pages/Categories'
 import { ContentBook } from '@/pages/ContentBook'
 import { Explore } from '@/pages/Explore'
 import { Favorites } from '@/pages/Favorites'
+import { History } from './pages/History'
 import { Home } from '@/pages/Home'
 import { Login } from '@/pages/Login'
 import { NotFound } from '@/pages/NotFound'
@@ -39,6 +40,7 @@ export const App = () => {
           <Route path='/categories/:categorie' element={<Categorie />} />
           <Route path='/explore' element={<Explore />} />
           <Route path='/favorites' element={<Favorites />} />
+          <Route path='/historial' element={<History />} />
           <Route path='/book/:id' element={<ContentBook />} />
           <Route path='/user' element={<Profile />} />
         </Route>

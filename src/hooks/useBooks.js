@@ -13,7 +13,6 @@ import {
   postComment,
   postFavorite,
   postQualification,
-  postView,
 } from '@/api/bookApi'
 import authStore from '@/store/authStore'
 import queryClient from '@/utils/queryClient'

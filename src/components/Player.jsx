@@ -22,7 +22,7 @@ export const Player = () => {
       url: audio.url || null
     }
 
-    setCurrentAudio(initialAudio)
+    setCurrentAudio(initialAudio, 0)
     setPosition(audio.progress || 0)
   }, [setCurrentAudio, setPosition, data])
 

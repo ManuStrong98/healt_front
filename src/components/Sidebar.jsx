@@ -5,13 +5,14 @@ import { Link, useLocation } from 'react-router-dom'
 
 export const Sidebar = ({ toggleSidebar }) => {
   const { pathname, search } = useLocation()
-  const { logout } = authStore()
+  const { logout, user } = authStore()
   const { logoutAudio, setIsOpenDescription } = audioStore()
   const options = [
     { label: 'Inicio', icon: 'house', to: '/' },
     { label: 'Explorar', icon: 'search-heart', to: '/explore' },
     { label: 'Favoritos', icon: 'heart', to: '/favorites' },
     { label: 'Categorias', icon: 'tags', to: '/categories' },
+    { label: 'Historial', icon: 'archive', to: '/historial' },
   ]
 
   const handleLogout = async () => {
@@ -45,23 +46,23 @@ export const Sidebar = ({ toggleSidebar }) => {
         ))}
       </div>
 
-      <Link 
-        className="flex items-center justify-center gap-4 fixed bottom-20 mb-5 w-full lg:w-52 hover:cursor-pointer"
+      <Link
+        className="flex items-center gap-4 fixed bottom-20 mb-5 w-full lg:w-52 hover:cursor-pointer px-5"
+        onClick={() => { toggleSidebar() }}
         to={'/user'}>
-        <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-htc-blue">
+        <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-htc-blue flex-shrink-0">
           <img
             src="src/assets/med.jpg"
             alt="User Avatar"
             className="w-full h-full object-cover"
           />
         </div>
-        <div>
-          <p className="text-lg">
-            Perfil
+        <div className="flex-1 overflow-hidden">
+          <p className="text-lg truncate">
+            {user.username}
           </p>
         </div>
       </Link>
-
 
       <button
         onClick={handleLogout}
